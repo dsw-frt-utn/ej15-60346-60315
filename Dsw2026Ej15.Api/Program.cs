@@ -1,4 +1,4 @@
-
+using Dsw2026Ej15.Data;
 namespace Dsw2026Ej15.Api
 {
     public class Program
@@ -10,6 +10,7 @@ namespace Dsw2026Ej15.Api
             // Add services to the container.
 
             builder.Services.AddControllers();
+            builder.Services.AddSingleton<IPersistence, PersistenceInMemory>();
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
 
