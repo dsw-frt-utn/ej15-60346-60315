@@ -3,11 +3,12 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Dsw2026Ej15.Data
+namespace Dsw2026Ej15.Domain.Interfaces
 {
     public interface IPersistence
     {
         IReadOnlyCollection<Doctor> GetDoctors();
+        void SaveDoctor(Doctor doctor);
 
         Doctor? GetDoctorById(Guid id);
 

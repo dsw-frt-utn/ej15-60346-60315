@@ -1,6 +1,9 @@
 ﻿using Dsw2026Ej15.Domain.Entities;
+using Dsw2026Ej15.Domain.Interfaces;
+using Dsw2026Ej15.Data.Dtos;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using System.Text.Json;
 using System.Xml.Linq;
@@ -9,13 +12,14 @@ namespace Dsw2026Ej15.Data
 {
     public class PersistenceInMemory : IPersistence
     {
-        private readonly List<Doctor> _doctors;
-        private readonly List<Speciality> _specialities;
+        private List<Doctor> _doctors= [];
+        private List<Speciality> _specialities= [];
 
         public PersistenceInMemory()
         {
             _doctors = new List<Doctor>();
-            _specialities = LoadSpecialities();
+            _specialities = new List<Speciality>();
+            LoadSpecialities();
         }
 
         public IReadOnlyCollection<Doctor> GetDoctors()
@@ -53,28 +57,29 @@ namespace Dsw2026Ej15.Data
 
         public Speciality? GetSpecialityById(Guid id)
         {
-            return _specialities.FirstOrDefault(speciality => speciality.Id == id);
+            return _specialities.SingleOrDefault(e => e.Id == id);
         }
 
-        private List<Speciality> LoadSpecialities()
+        private void LoadSpecialities()
         {
-            var filePath = Path.Combine(AppContext.BaseDirectory, "specialities.json");
-
-            if (!File.Exists(filePath))
+          try
             {
-                return new List<Speciality>();
-            }
-
-            var json = File.ReadAllText(filePath);
-
-            var specialities = JsonSerializer.Deserialize<List<Speciality>>(
-                json,
-                new JsonSerializerOptions
+                string jsonPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Sources", "Specialities.Json");
+                var json = File.ReadAllText(jsonPath);
+                var specialities = JsonSerializer.Deserialize<List<SpecialityDto>>(json, new JsonSerializerOptions()
                 {
-                    PropertyNameCaseInsensitive = true
-                });
+                    PropertyNameCaseInsensitive = true,
+                }) ?? [];
+                _specialities = [.. specialities.Select(s => new Speciality(s.Name, s.Description, s.Id))];
+            }
+            catch(Exception ex)
+            {
+        }
+    }
 
-            return specialities ?? new List<Speciality>();
+        public void SaveDoctor(Doctor doctor)
+        {
+           _doctors.Add(doctor);
         }
     }
 }
