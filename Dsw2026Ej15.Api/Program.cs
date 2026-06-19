@@ -1,5 +1,6 @@
 using Dsw2026Ej15.Data;
 using Dsw2026Ej15.Domain.Interfaces;
+using Dsw2026Ej15.Api.Middlewares;
 namespace Dsw2026Ej15.Api
 {
     public class Program
@@ -23,6 +24,8 @@ namespace Dsw2026Ej15.Api
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+
+            app.UseMiddleware<ExceptionMiddleware>();
 
             app.UseAuthorization();
 
